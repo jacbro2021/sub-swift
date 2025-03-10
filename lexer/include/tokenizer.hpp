@@ -16,7 +16,7 @@ namespace lexer {
        WHITESPACE,  
        POTENTIAL_COMMENT,
        POTENTIAL_ARROW,
-       POTENTIAL_EQUALITY,
+       POTENTIAL_EXTENDED_OPERATOR,
        COMMENT,
        IDENTIFIER,
        OPERATOR,
@@ -33,7 +33,7 @@ namespace lexer {
         "WHITESPACE",
         "POTENTIAL_COMMENT",
         "POTENTIAL_ARROW",
-        "POTENTIAL_EQUALITY",
+        "POTENTIAL_EXTENDED_OPERATOR",
         "COMMENT",
         "IDENTIFIER",
         "OPERATOR",
@@ -66,6 +66,7 @@ namespace lexer {
     private:
         map<string, Keyword> mKeywords;
         map<string, Type> mTypes;
+
         void endToken(Token& currTok, vector<Token>& tokens);
         bool checkKeyword(Token& currTok);
         bool checkType(Token& currTok);

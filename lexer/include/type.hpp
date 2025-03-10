@@ -12,6 +12,7 @@ namespace lexer {
         INT,
         DOUBLE,
         STRING,
+        BOOL,
     };
 
     class Type {

@@ -13,6 +13,10 @@ namespace lexer {
         VAR,
         FUNC,
         RETURN,
+        IF,
+        ELSE,
+        TRUE,
+        FALSE,
     };
 
     class Keyword {
