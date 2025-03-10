@@ -1,3 +1,1 @@
-10 
-10.1
-let test: Int = 10
+let x: Int = 10 / 2 + 10.24

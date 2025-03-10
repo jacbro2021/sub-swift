@@ -6,6 +6,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 add_library(lexer_internals 
     src/tokenizer.cpp  
     include/tokenizer.hpp 
+    include/type.hpp 
+    include/keyword.hpp 
 )
 target_include_directories(lexer_internals PUBLIC include)
 
