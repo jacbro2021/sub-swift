@@ -34,7 +34,10 @@ namespace lexer {
                     if (currTok.mType == WHITESPACE) {
                         currTok.mType = NUMBER_LITERAL;
                         currTok.mLexeme.push_back(c);
-                    } else if (currTok.mType == POTENTIAL_COMMENT || currTok.mType == POTENTIAL_ARROW) {
+                    } else if (currTok.mType == POTENTIAL_COMMENT || 
+                            currTok.mType == POTENTIAL_ARROW || 
+                            currTok.mType == POTENTIAL_EQUALITY) 
+                    {
                         endToken(currTok, tokens);
                         currTok.mType = NUMBER_LITERAL;
                         currTok.mLexeme.push_back(c);
@@ -71,7 +74,6 @@ namespace lexer {
                 case '<':
                 case '+':
                 case '*':
-                case '=':
                     if (currTok.mType == STRING_LITERAL || currTok.mType == COMMENT) {
                         currTok.mLexeme.push_back(c);
                     } else {
@@ -79,6 +81,20 @@ namespace lexer {
                         currTok.mType = OPERATOR;
                         currTok.mLexeme.push_back(c);
                         endToken(currTok, tokens);
+                    }
+                    break;
+
+                case '=':
+                    if (currTok.mType == STRING_LITERAL || currTok.mType == COMMENT) {
+                        currTok.mLexeme.push_back(c);
+                    } else if (currTok.mType == POTENTIAL_EQUALITY) {
+                        currTok.mLexeme.push_back(c);
+                        currTok.mType = OPERATOR;
+                        endToken(currTok, tokens);
+                    }else {
+                        endToken(currTok, tokens);
+                        currTok.mType = POTENTIAL_EQUALITY;
+                        currTok.mLexeme.push_back(c);
                     }
                     break;
 
@@ -171,7 +187,10 @@ namespace lexer {
          
         if (currTok.mType == NUMBER_LITERAL) {
             currTok.mType = INTEGER_LITERAL;
-        } else if (currTok.mType == POTENTIAL_COMMENT || currTok.mType == POTENTIAL_ARROW) {
+        } else if (currTok.mType == POTENTIAL_COMMENT || 
+            currTok.mType == POTENTIAL_ARROW ||
+            currTok.mType == POTENTIAL_EQUALITY) 
+        {
             currTok.mType = OPERATOR;
         } else if (currTok.mType == IDENTIFIER) {
             if (checkKeyword(currTok)) {

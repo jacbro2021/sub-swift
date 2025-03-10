@@ -14,7 +14,7 @@ int main() {
     string var_test = "/Users/jsbrown/Developer/sub-swift/tests/var.swift";
     string basic_func_test = "/Users/jsbrown/Developer/sub-swift/tests/basic_func.swift";
 
-    FILE * fh = fopen(basic_func_test.data(), "r");
+    FILE * fh = fopen(sandbox_test.data(), "r");
     if (!fh) {
         cerr << "Can't find file" << endl;
     }
