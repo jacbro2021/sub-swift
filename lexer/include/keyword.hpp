@@ -11,6 +11,8 @@ namespace lexer {
         NONE_KW, // Default, not to be used.
         LET,
         VAR,
+        FUNC,
+        RETURN,
     };
 
     class Keyword {

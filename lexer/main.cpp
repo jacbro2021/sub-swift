@@ -8,13 +8,13 @@ using namespace std;
 using namespace lexer;
 
 int main() {
-    cout << "Sub-Swift 0.0.1\n" << endl;
+    cout << "Lexer 0.0.1\n" << endl;
 
     string sandbox_test = "/Users/jsbrown/Developer/sub-swift/tests/sandbox.swift";
     string var_test = "/Users/jsbrown/Developer/sub-swift/tests/var.swift";
     string basic_func_test = "/Users/jsbrown/Developer/sub-swift/tests/basic_func.swift";
 
-    FILE * fh = fopen(sandbox_test.data(), "r");
+    FILE * fh = fopen(basic_func_test.data(), "r");
     if (!fh) {
         cerr << "Can't find file" << endl;
     }
@@ -27,7 +27,7 @@ int main() {
 
     cout << "TEST INPUT:\n\n" << file_contents << "\n" << endl;
 
-    cout << "TEST OUTPUT:\n" << endl;
+    cout << "LEXER OUTPUT:\n" << endl;
     Lexer lex = Lexer();
     vector<Token> toks = lex.runLexer(file_contents);
     for (auto tok : toks) {

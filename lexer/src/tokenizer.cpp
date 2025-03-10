@@ -7,6 +7,8 @@ namespace lexer {
     Lexer::Lexer() {
         mKeywords["let"] = Keyword("let", LET);
         mKeywords["var"] = Keyword("var", VAR);
+        mKeywords["func"] = Keyword("func", FUNC);
+        mKeywords["return"] = Keyword("return", RETURN);
 
         mTypes["Int"] = Type("Int", INT);
         mTypes["Double"] = Type("Double", DOUBLE);
@@ -32,7 +34,7 @@ namespace lexer {
                     if (currTok.mType == WHITESPACE) {
                         currTok.mType = NUMBER_LITERAL;
                         currTok.mLexeme.push_back(c);
-                    } else if (currTok.mType == POTENTIAL_COMMENT) {
+                    } else if (currTok.mType == POTENTIAL_COMMENT || currTok.mType == POTENTIAL_ARROW) {
                         endToken(currTok, tokens);
                         currTok.mType = NUMBER_LITERAL;
                         currTok.mLexeme.push_back(c);
@@ -41,19 +43,42 @@ namespace lexer {
                     }
                     break;
                
-                case '>':
-                case '<':
-                case '+':
                 case '-':
-                case '*':
-                case '=':
-                    if (currTok.mType == WHITESPACE) {
+                    if (currTok.mType == STRING_LITERAL || currTok.mType == COMMENT) {
+                        currTok.mLexeme.push_back(c);
+                    } else {
+                        endToken(currTok, tokens);
+                        currTok.mType = POTENTIAL_ARROW;
+                        currTok.mLexeme.push_back(c);
+                    }
+                    break;
+
+                case '>':
+                    if (currTok.mType == STRING_LITERAL || currTok.mType == COMMENT) {
+                        currTok.mLexeme.push_back(c);
+                    } else if (currTok.mType == POTENTIAL_ARROW) {
+                        currTok.mLexeme.push_back(c);
+                        currTok.mType = PUNCTUATOR;
+                        endToken(currTok, tokens);
+                    } else {
                         endToken(currTok, tokens);
                         currTok.mType = OPERATOR;
                         currTok.mLexeme.push_back(c);
                         endToken(currTok, tokens);
-                    } else {
+                    }
+                    break;
+
+                case '<':
+                case '+':
+                case '*':
+                case '=':
+                    if (currTok.mType == STRING_LITERAL || currTok.mType == COMMENT) {
                         currTok.mLexeme.push_back(c);
+                    } else {
+                        endToken(currTok, tokens);
+                        currTok.mType = OPERATOR;
+                        currTok.mLexeme.push_back(c);
+                        endToken(currTok, tokens);
                     }
                     break;
 
@@ -146,7 +171,7 @@ namespace lexer {
          
         if (currTok.mType == NUMBER_LITERAL) {
             currTok.mType = INTEGER_LITERAL;
-        } else if (currTok.mType == POTENTIAL_COMMENT) {
+        } else if (currTok.mType == POTENTIAL_COMMENT || currTok.mType == POTENTIAL_ARROW) {
             currTok.mType = OPERATOR;
         } else if (currTok.mType == IDENTIFIER) {
             if (checkKeyword(currTok)) {

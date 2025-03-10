@@ -15,6 +15,7 @@ namespace lexer {
     enum TokenType {
        WHITESPACE,  
        POTENTIAL_COMMENT,
+       POTENTIAL_ARROW,
        COMMENT,
        IDENTIFIER,
        OPERATOR,
@@ -30,6 +31,7 @@ namespace lexer {
     static const char* sTokenTypeStrings[] = {
         "WHITESPACE",
         "POTENTIAL_COMMENT",
+        "POTENTIAL_ARROW",
         "COMMENT",
         "IDENTIFIER",
         "OPERATOR",
