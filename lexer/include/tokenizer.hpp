@@ -66,6 +66,8 @@ namespace lexer {
     private:
         map<string, Keyword> mKeywords;
         map<string, Type> mTypes;
+        int mLine{1};
+        int mColumn{1};
 
         void endToken(Token& currTok, vector<Token>& tokens);
         bool checkKeyword(Token& currTok);

@@ -28,10 +28,15 @@ int main() {
     cout << "TEST INPUT:\n\n" << file_contents << "\n" << endl;
 
     cout << "LEXER OUTPUT:\n" << endl;
-    Lexer lex = Lexer();
-    vector<Token> toks = lex.runLexer(file_contents);
-    for (auto tok : toks) {
-        tok.debugPrint();
+    try {
+        Lexer lex = Lexer();
+        vector<Token> toks = lex.runLexer(file_contents);
+
+        for (auto tok : toks) {
+            tok.debugPrint();
+        }
+    } catch (exception& err) {
+        cerr << err.what() << endl;
     }
 
     return 0;

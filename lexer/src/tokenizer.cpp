@@ -1,5 +1,5 @@
-#include <assert.h>
 #include <iostream>
+#include <stdexcept>
 
 #include "tokenizer.hpp"
 
@@ -23,12 +23,15 @@ namespace lexer {
     vector<Token> Lexer::runLexer(const string& source) {
         Token currTok;
         vector<Token> tokens;
+        int column = 1;
+        int row = 1;
 
         for (char c : source) {
             if (currTok.mType == POTENTIAL_COMMENT) {
                 if (c == '/') {
                     currTok.mType = COMMENT;
                     currTok.mLexeme.push_back(c);
+                    ++mColumn;
                     continue;
                 } else {
                     currTok.mType = OPERATOR;
@@ -39,6 +42,7 @@ namespace lexer {
                     currTok.mType = OPERATOR;
                     currTok.mLexeme.push_back(c);
                     endToken(currTok, tokens);
+                    ++mColumn;
                     continue;
                 } else {
                     currTok.mType = OPERATOR;
@@ -49,6 +53,7 @@ namespace lexer {
                     currTok.mType = PUNCTUATOR;
                     currTok.mLexeme.push_back(c);
                     endToken(currTok, tokens);
+                    ++mColumn;
                     continue;
                 } else {
                     currTok.mType = OPERATOR;
@@ -68,6 +73,7 @@ namespace lexer {
                 case '8':
                 case '9':
                     if (currTok.mType == WHITESPACE) {
+                        currTok.mColumn = mColumn;
                         currTok.mType = NUMBER_LITERAL;
                         currTok.mLexeme.push_back(c);
                     } else {
@@ -80,6 +86,7 @@ namespace lexer {
                         currTok.mLexeme.push_back(c);
                     } else {
                         endToken(currTok, tokens);
+                        currTok.mColumn = mColumn;
                         currTok.mType = POTENTIAL_ARROW;
                         currTok.mLexeme.push_back(c);
                     }
@@ -91,6 +98,7 @@ namespace lexer {
                         currTok.mLexeme.push_back(c);
                     } else {
                         endToken(currTok, tokens);
+                        currTok.mColumn = mColumn;
                         currTok.mType = OPERATOR;
                         currTok.mLexeme.push_back(c);
                         endToken(currTok, tokens);
@@ -105,6 +113,7 @@ namespace lexer {
                     }else {
                         endToken(currTok, tokens);
                         currTok.mType = POTENTIAL_EXTENDED_OPERATOR;
+                        currTok.mColumn = mColumn;
                         currTok.mLexeme.push_back(c);
                     }
                     break;
@@ -115,6 +124,7 @@ namespace lexer {
                     } else {
                         endToken(currTok, tokens);
                         currTok.mType = POTENTIAL_COMMENT;
+                        currTok.mColumn = mColumn;
                         currTok.mLexeme.push_back(c);
                     }
                     break;
@@ -136,11 +146,14 @@ namespace lexer {
                         currTok.mLexeme.push_back(c);
                     } else {
                         endToken(currTok, tokens);
+                        ++mLine;
+                        mColumn = 0;
                     }
                     break;
 
                 case '"':
                     if (currTok.mType == WHITESPACE) {
+                        currTok.mColumn = mColumn;
                         currTok.mType = STRING_LITERAL;
                     } else {
                         endToken(currTok, tokens);
@@ -151,7 +164,9 @@ namespace lexer {
                     if (currTok.mType == NUMBER_LITERAL) {
                         currTok.mType = FLOAT_LITERAL;
                         currTok.mLexeme.push_back(c);
-                    } else {
+                    } else if (currTok.mType == FLOAT_LITERAL) {
+                        throw runtime_error("Error: Unexpected \".\" found.");
+                    }else {
                         currTok.mLexeme.push_back(c);
                     }
                     break;
@@ -166,6 +181,7 @@ namespace lexer {
                         currTok.mLexeme.push_back(c);
                     } else {
                         endToken(currTok, tokens);
+                        currTok.mColumn = mColumn;
                         currTok.mType = PUNCTUATOR;
                         currTok.mLexeme.push_back(c);
                         endToken(currTok, tokens);
@@ -174,6 +190,7 @@ namespace lexer {
                 
                 default:
                     if (currTok.mType == WHITESPACE) {
+                        currTok.mColumn = mColumn;
                         currTok.mType = IDENTIFIER;
                         currTok.mLexeme.push_back(c);
                     } else {
@@ -181,6 +198,7 @@ namespace lexer {
                     }
                     break;
             }
+            ++mColumn;
         }
         endToken(currTok, tokens);
         return tokens;
@@ -203,9 +221,13 @@ namespace lexer {
             }
         }
 
+        currTok.mLine = mLine;
         tokens.push_back(currTok);
+
         currTok.mLexeme.erase();
         currTok.mType = WHITESPACE;
+        currTok.mLine = 0;
+        currTok.mColumn = 0;
     }
 
     bool Lexer::checkKeyword(Token& currTok) {
@@ -223,6 +245,6 @@ namespace lexer {
     }
 
     void Token::debugPrint() {
-        cout << "(TYPE: " << sTokenTypeStrings[mType] << ", VALUE: " << mLexeme << ")" << endl;
+        cout << "(TYPE: " << sTokenTypeStrings[mType] << ", VALUE: " << mLexeme << ", LINE: " << mLine << ", COLUMN: " << mColumn<< ")" << endl;
     }
 }
